@@ -1,0 +1,6 @@
+<release name="Neko">
+    <description>
+        Neko - A tool for configuring network settings by querying DNS.
+    </description>
+    <version major="0" minor="1"/>
+</release>

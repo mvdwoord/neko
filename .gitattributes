@@ -1,2 +1,4 @@
 * text=auto !eol
+/build.xml -text
 /neko.sh -text
+/release.xml -text

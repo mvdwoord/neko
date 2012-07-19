@@ -1,0 +1,64 @@
+<project name="Neko" default="dist" basedir=".">
+
+    <!-- Set DSTAMP, TSTAMP and TODAY properties -->
+    <tstamp>
+        <format property="now" pattern="MMMM dd yyyy HH:mm"/>
+    </tstamp>
+
+
+    <!-- Set other global properties. -->
+    <property name="build"  location="build"/>
+    <property name="dist"  location="dist"/>
+
+
+    <!-- Do some basic initialization. -->
+    <target name="init">
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+    </target>
+
+
+    <!-- Build a release. -->
+    <target name="build" depends="init">
+        <!-- Read release properties from release.xml -->
+        <xmlproperty file="release.xml" collapseAttributes="true"/>
+
+        <!-- Extract current svn info and write to svninfo.xml -->
+        <exec dir="." executable="svn" output="${build}/svninfo.xml">
+            <arg line="info --xml"/>
+        </exec>
+
+        <!-- Read revision properties from svninfo.xml -->
+        <xmlproperty file="${build}/svninfo.xml" collapseAttributes="true"/>
+
+        <!-- Create a version property from major, minor and revision numbers -->
+        <property name="version.number" value="${release.version.major}.${release.version.minor}.${info.entry.commit.revision}"/>
+        <property name="version.string" value="${release.name} version ${version.number}, built ${now}"/>
+        <echo>Version string: ${version.string}</echo>
+
+        <!-- Copy release file(s) to build directory -->
+        <copy file="neko.sh" todir="${build}"/>
+
+        <!-- Replace version template stanza with the current version string -->
+        <replaceregexp file="${build}/neko.sh"
+            match="UNVERSIONED.UNRELEASED"
+            replace="${version.string}"
+            byline="true"/>
+    </target>
+
+
+    <!-- Generate a distributable. -->
+    <target name="dist" depends="build">
+        <zip destfile="${dist}/neko-${version.number}.zip">
+            <fileset dir="build" includes="*.sh"/>
+        </zip>
+    </target>
+
+
+    <!-- Clean up. -->
+    <target name="clean">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+        <delete file="svninfo.xml"/>
+    </target>
+</project>
