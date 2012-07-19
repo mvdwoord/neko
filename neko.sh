@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Version 0.1
+# UNVERSIONED.UNRELEASED
 #
 # Copyright © 2008, 2009, 2010, 2011, 2012 Rubin Simons
 #
