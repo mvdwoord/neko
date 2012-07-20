@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# UNVERSIONED.UNRELEASED
+# RELEASE.STRING.VERSION
 #
-# Copyright © 2008, 2009, 2010, 2011, 2012 Rubin Simons
+# Copyright © 2008-2012 RAAF Technology bv
 #
 # This file is part of Neko (formerly known as netconfig).
 #
@@ -19,6 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Neko. If not, see <http://www.gnu.org/licenses/>.
 
+
+# Print version. Needs to be fixed so you can actually call a host "version".
+if [ "$1" = "version" ]; then
+echo "RELEASE.STRING.VERSION
+RELEASE.STRING.COPYRIGHT
+RELEASE.STRING.RELDATE
+RELEASE.STRING.BUILT
+RELEASE.STRING.LICENSE"
+exit 0
+fi
 
 # checkIpFormat() <ip>: Check ip string format.
 checkIpFormat(){
