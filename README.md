@@ -1,4 +1,4 @@
-Neko
+![](https://raw.githubusercontent.com/wiki/raaftech/neko/images/neko.png)Neko
 ====
 Neko (also known by its less original name netconfig) is a network settings templating tool. It can read settings from DNS, discover the size of a network and set local network settings statically using discovered information.
 
