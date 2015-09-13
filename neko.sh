@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-#user="$(echo $USER)"
-#if [ "$user" != root ]; then
-#    echo "You have to be root to run this script."
-#    echo ""
-#    exit 1
-#fi
+user="$(echo $USER)"
+if [ "$user" != root ]; then
+    echo "You have to be root to run this script."
+    echo ""
+    exit 1
+fi
 
 if [ -d "/etc/neko" ]; then
     cfgdir="/etc/neko"
@@ -102,7 +102,11 @@ writeRoute() {
             echo "route add $destination mask $netmask $gateway metric $metric"
             ;;
             linux)
-            echo "route add -$type $destination netmask $netmask gw $gateway"
+            if [ "$type" = "net" ]; then
+                echo "route add -$type $destination netmask $netmask gw $gateway"
+            elif [ "$type" = "host" ]; then
+                echo "route add -$type $destination gw $gateway"
+            fi
             ;;
             bsd|darwin)
             echo "route add -$type $destination $gateway $netmask"
@@ -117,7 +121,11 @@ writeRoute() {
             echo "route delete $destination"
             ;;
             "linux")
-            echo "route del $destination"
+            if [ "$type" = "net" ]; then
+                echo "route del -$type $destination netmask $netmask"
+            elif [ "$type" = "host" ]; then
+                echo "route del -$type $destination"
+            fi
             ;;
             "bsd"|"darwin")
             echo "route del -$type $destination $gateway $netmask"
@@ -186,9 +194,9 @@ case "$2" in
     "off")
     generateRoutes
     generateDns
-    bash "$config/disconnect.sh"
-    bash "/tmp/neko-route-add-$config.out"
-    bash "/tmp/neo-dns-add-$config.out"
+    bash "$cfgdir/$config/disconnect.sh"
+    bash "/tmp/neko-route-del-$config.out"
+    bash "/tmp/neko-dns-del-$config.out"
     ;;
     *)
     echo "Usage: $0 <config> on|off"
