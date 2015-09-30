@@ -159,10 +159,7 @@ generateRoutes() {
 
 backupDns() {
     old="/tmp/neko-dns-resolvconf-old-$config.out"
-
-    if [ ! -e "$old" ]; then
-        cp /etc/resolv.conf "$old"
-    fi
+    cp /etc/resolv.conf "$old"
 }
 
 generateDns() {
@@ -187,21 +184,31 @@ generateDns() {
 # Main case statement.
 case "$2" in
     "on")
-    backupDns
-    generateRoutes
-    generateDns
-    bash "$cfgdir/$config/connect.sh"
-    bash "/tmp/neko-route-add-$config.out"
-    bash "/tmp/neko-dns-add-$config.out"
-    touch "/tmp/neko-$config.active"
+    if [ ! -e "/tmp/neko-$config.active" ]; then
+        backupDns
+        generateRoutes
+        generateDns
+        bash "$cfgdir/$config/connect.sh"
+        bash "/tmp/neko-route-add-$config.out"
+        bash "/tmp/neko-dns-add-$config.out"
+        touch "/tmp/neko-$config.active"
+    else
+        echo "Connection already active. Please 'off' it first."
+        exit 1
+    fi
     ;;
     "off")
-    generateRoutes
-    generateDns
-    bash "$cfgdir/$config/disconnect.sh"
-    bash "/tmp/neko-route-del-$config.out"
-    bash "/tmp/neko-dns-del-$config.out"
-    rm -f "/tmp/neko-$config.active"
+    if [ -e "/tmp/neko-$config.active" ]; then
+        generateRoutes
+        generateDns
+        bash "$cfgdir/$config/disconnect.sh"
+        bash "/tmp/neko-route-del-$config.out"
+        bash "/tmp/neko-dns-del-$config.out"
+        rm -f "/tmp/neko-$config.active"
+    else
+        echo "Connection not active. Please 'on' it first."
+        exit 1
+    fi
     ;;
     *)
     echo "Usage: $0 <config> on|off"
