@@ -10,7 +10,7 @@ fi
 if [ -d "/etc/neko" ]; then
     cfgdir="/etc/neko"
 elif [ -d "/usr/local/etc/neko" ]; then
-     cfgdir="/etc/local/etc/neko"
+     cfgdir="/usr/local/etc/neko"
 else
     echo "No configuration directory found."
     echo "Please create a directory at either"
